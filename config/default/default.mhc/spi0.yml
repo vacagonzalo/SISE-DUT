@@ -1,0 +1,43 @@
+format_version: v1.0
+type: UniqueComponent
+attributes: {id: spi0}
+children:
+- type: Symbols
+  children:
+  - type: Integer
+    attributes: {id: SPI_CSR0_SCBR_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: spi0, value: '150'}
+  - type: Integer
+    attributes: {id: SPI_CSR1_SCBR_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: spi0, value: '150'}
+  - type: Integer
+    attributes: {id: SPI_CSR2_SCBR_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: spi0, value: '150'}
+  - type: Integer
+    attributes: {id: SPI_CSR3_SCBR_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: spi0, value: '150'}
+  - type: Integer
+    attributes: {id: SPI_MASTER_CLOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: spi0, value: '150000000'}
+- type: ElementPosition
+  attributes: {x: '740', y: '20', id: spi0}
