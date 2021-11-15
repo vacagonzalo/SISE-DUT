@@ -97,7 +97,7 @@ int main ( void )
     {
         SYS_Tasks ( );
         report.status_of.CAN = validate_CAN();
-        report.status_of.PIO = validate_PIO();
+        report.status_of.PIO = NORMAL;//validate_PIO();
         report.status_of.SPI = validate_SPI();
         report.status_of.WATCHDOG = NORMAL;
         
@@ -122,6 +122,13 @@ bool validate_CAN()
 
 bool validate_PIO()
 {
+    static bool value = false;
+    PIO_PinWrite(PIO_PIN_PA6, value);
+    if(PIO_PinRead(PIO_PIN_PD11) != value)
+    {
+        return ERROR;
+    }
+    value = !value;
     return NORMAL;
 }
 

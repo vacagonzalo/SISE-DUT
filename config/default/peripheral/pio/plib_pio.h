@@ -62,6 +62,24 @@
 // *****************************************************************************
 
 
+/*** Macros for GPIO_PD11 pin ***/
+#define GPIO_PD11_Set()               (PIOD_REGS->PIO_SODR = (1<<11))
+#define GPIO_PD11_Clear()             (PIOD_REGS->PIO_CODR = (1<<11))
+#define GPIO_PD11_Toggle()            (PIOD_REGS->PIO_ODSR ^= (1<<11))
+#define GPIO_PD11_OutputEnable()      (PIOD_REGS->PIO_OER = (1<<11))
+#define GPIO_PD11_InputEnable()       (PIOD_REGS->PIO_ODR = (1<<11))
+#define GPIO_PD11_Get()               ((PIOD_REGS->PIO_PDSR >> 11) & 0x1)
+#define GPIO_PD11_PIN                  PIO_PIN_PD11
+
+/*** Macros for GPIO_PA6 pin ***/
+#define GPIO_PA6_Set()               (PIOA_REGS->PIO_SODR = (1<<6))
+#define GPIO_PA6_Clear()             (PIOA_REGS->PIO_CODR = (1<<6))
+#define GPIO_PA6_Toggle()            (PIOA_REGS->PIO_ODSR ^= (1<<6))
+#define GPIO_PA6_OutputEnable()      (PIOA_REGS->PIO_OER = (1<<6))
+#define GPIO_PA6_InputEnable()       (PIOA_REGS->PIO_ODR = (1<<6))
+#define GPIO_PA6_Get()               ((PIOA_REGS->PIO_PDSR >> 6) & 0x1)
+#define GPIO_PA6_PIN                  PIO_PIN_PA6
+
 
 // *****************************************************************************
 /* PIO Port
