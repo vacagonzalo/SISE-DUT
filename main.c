@@ -32,25 +32,24 @@
 // Section: Main Entry Point
 // *****************************************************************************
 // *****************************************************************************
+#define FRAME_SIZE  6
 #define FRAME_START 0
-#define FLAGS 5
-#define FLAG_LENGTH 1
+#define FLAGS_INDEX 1
+#define COUNT_INDEX 2
 
 #define NORMAL 0
-#define ERROR 1
+#define ERROR  1
 
-#define COUNTER_INITIAL_VALUE 0
-#define COUNTER_LENGTH 4
+#define COUNTER_INIT 0
+#define COUNTER_SIZE 4
 
-#define BUFFER_OFFSET 1
-#define BUFFER_LENGTH 6
-
+#define BIT 1
 struct status_bitfield_t
 {
-    uint8_t CAN:FLAG_LENGTH;
-    uint8_t SPI:FLAG_LENGTH;
-    uint8_t PIO:FLAG_LENGTH;
-    uint8_t WATCHDOG:FLAG_LENGTH;
+    uint8_t CAN:BIT;
+    uint8_t SPI:BIT;
+    uint8_t PIO:BIT;
+    uint8_t WATCHDOG:BIT;
 }__attribute__((packed));
 
 typedef union
@@ -61,7 +60,7 @@ typedef union
 
 typedef union
 {
-    uint8_t as_bytes[COUNTER_LENGTH];
+    uint8_t as_bytes[COUNTER_SIZE];
     uint32_t packed;
 }reportCounter_t;
 
@@ -70,15 +69,12 @@ bool validate_PIO();
 bool validate_SPI();
 bool validate_WATCHDOG();
 
-void update_report(uint8_t *buffer, report_t *report, reportCounter_t *counter);
-void send_report(uint8_t *buffer, reportCounter_t *counter);
-
 int main ( void )
 {
-    uint8_t buffer[] = "RCCCCF";
+    uint8_t buffer[] = "RFCCCC";
     
     reportCounter_t counter;
-    counter.packed = COUNTER_INITIAL_VALUE;
+    counter.packed = COUNTER_INIT;
  
     report_t report;
     report.packed = NORMAL;
@@ -86,8 +82,16 @@ int main ( void )
     
     SYS_Initialize ( NULL );
     
-    update_report(buffer, &report, &counter);
-    send_report(buffer, &counter);
+    buffer[FRAME_START] = 'R';
+    buffer[FLAGS_INDEX] = report.packed;
+    buffer[COUNT_INDEX + 0] = counter.as_bytes[0];
+    buffer[COUNT_INDEX + 1] = counter.as_bytes[1];
+    buffer[COUNT_INDEX + 2] = counter.as_bytes[2];
+    buffer[COUNT_INDEX + 3] = counter.as_bytes[3];
+    USART1_Write(&buffer[0], FRAME_SIZE);
+    
+    counter.packed++;
+    WDT_Clear();
     
     while ( true )
     {
@@ -95,9 +99,18 @@ int main ( void )
         report.status_of.CAN = validate_CAN();
         report.status_of.PIO = validate_PIO();
         report.status_of.SPI = validate_SPI();
-        report.status_of.WATCHDOG = validate_WATCHDOG();
-        update_report(buffer, &report, &counter);
-        send_report(buffer, &counter);
+        report.status_of.WATCHDOG = NORMAL;
+        
+        buffer[FRAME_START] = 'R';
+        buffer[FLAGS_INDEX] = report.packed;
+        buffer[COUNT_INDEX + 0] = counter.as_bytes[0];
+        buffer[COUNT_INDEX + 1] = counter.as_bytes[1];
+        buffer[COUNT_INDEX + 2] = counter.as_bytes[2];
+        buffer[COUNT_INDEX + 3] = counter.as_bytes[3];
+        USART1_Write(&buffer[0], FRAME_SIZE);
+        
+        counter.packed++;
+        WDT_Clear();
     }
     return ( EXIT_FAILURE );
 }
@@ -114,15 +127,11 @@ bool validate_PIO()
 
 bool validate_SPI()
 {
-    static uint8_t spi_write[] = "SPI";
-    uint8_t spi_read[] = "???";
+    static uint8_t spi_write[3] = {1, 2, 3};
+    static uint8_t spi_read[3] = {4, 5, 6};
     uint8_t status = NORMAL;
-    SPI0_WriteRead(
-            &spi_write[0], 
-            sizeof(spi_write),
-            &spi_read[0], 
-            sizeof(spi_read));
-    for(uint8_t i = 0; i < 4; ++i)
+    SPI0_WriteRead(&spi_write[0], 3, &spi_read[0], 3);
+    for(uint8_t i = 0; i < 3; ++i)
     {
         if(spi_write[i] != spi_read[i])
         {
@@ -133,27 +142,6 @@ bool validate_SPI()
     return status;
 }
 
-bool validate_WATCHDOG()
-{
-    WDT_Clear();
-    return NORMAL;
-}
-
-void update_report(uint8_t *buffer, report_t *report, reportCounter_t *counter)
-{
-    for(uint8_t byte = 0; byte < COUNTER_LENGTH; ++byte)
-    {
-        buffer[byte + BUFFER_OFFSET] = counter->as_bytes[byte];
-    }
-    buffer[FLAGS] = report->packed;
-}
-
-void send_report(uint8_t *buffer, reportCounter_t *counter)
-{
-    USART1_Write(buffer, BUFFER_LENGTH);
-    counter->packed++;
-}
 /*******************************************************************************
  End of File
 */
-
