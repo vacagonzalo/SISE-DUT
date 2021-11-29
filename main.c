@@ -43,6 +43,10 @@
 #define COUNTER_INIT 0
 #define COUNTER_SIZE 4
 
+/* Standard identifier id[28:18]*/
+#define WRITE_ID(id) (id << 18)
+#define READ_ID(id)  (id >> 18)
+
 #define BIT 1
 struct status_bitfield_t
 {
@@ -69,6 +73,8 @@ bool validate_PIO();
 bool validate_SPI();
 bool validate_WATCHDOG();
 
+uint8_t Mcan1MessageRAM[MCAN1_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned (32)))__attribute__((space(data), section (".ram_nocache")));
+
 int main ( void )
 {
     uint8_t buffer[] = "RFCCCC";
@@ -93,6 +99,7 @@ int main ( void )
     counter.packed++;
     WDT_Clear();
     
+    MCAN1_MessageRAMConfigSet(Mcan1MessageRAM);
     MCAN1_REGS->MCAN_CCCR |= MCAN_TEST_LBCK(1); // CANBUS external loopback
 
     while ( true )
@@ -119,6 +126,60 @@ int main ( void )
 
 bool validate_CAN()
 {
+    static uint32_t status = 0;
+
+    static uint8_t txFiFo[MCAN1_TX_FIFO_BUFFER_SIZE];
+    static uint8_t rxFiFo0[MCAN1_RX_FIFO0_SIZE];
+    
+    static MCAN_TX_BUFFER *txBuffer = NULL;
+    static uint8_t numberOfMessage = 0;
+    
+    // <SEND>
+    memset(txFiFo, 0x00, MCAN1_TX_FIFO_BUFFER_ELEMENT_SIZE);
+    txBuffer = (MCAN_TX_BUFFER *)txFiFo;
+    txBuffer->id = WRITE_ID(0x469);
+    txBuffer->dlc = 8;
+    for (uint8_t loop_count = 0; loop_count < 8; loop_count++)
+    {
+        txBuffer->data[loop_count] = loop_count;
+    }
+    if (MCAN1_MessageTransmitFifo(1, txBuffer) != true)
+    {
+        return ERROR; // could not transmit
+    }
+    // </SEND>
+    
+    // <READ>
+    if (MCAN1_InterruptGet(MCAN_INTERRUPT_RF0N_MASK))
+    {    
+        MCAN1_InterruptClear(MCAN_INTERRUPT_RF0N_MASK);
+
+        /* Check MCAN Status */
+        status = MCAN1_ErrorGet();
+
+        if (((status & MCAN_PSR_LEC_Msk) == MCAN_ERROR_NONE) || ((status & MCAN_PSR_LEC_Msk) == MCAN_ERROR_LEC_NO_CHANGE))
+        {
+            numberOfMessage = MCAN1_RxFifoFillLevelGet(MCAN_RX_FIFO_0);
+            if (numberOfMessage != 0)
+            {
+                memset(rxFiFo0, 0x00, (numberOfMessage * MCAN1_RX_FIFO0_ELEMENT_SIZE));
+                if (MCAN1_MessageReceiveFifo(MCAN_RX_FIFO_0, numberOfMessage, (MCAN_RX_BUFFER *)rxFiFo0) == true)
+                {
+                    //print_message(numberOfMessage, (MCAN_RX_BUFFER *)rxFiFo0, MCAN1_RX_FIFO0_ELEMENT_SIZE);
+                    return NORMAL;
+                }
+                else
+                {
+                    return ERROR;
+                }
+            }
+        }
+        else
+        {
+            return ERROR;
+        }
+    }
+    // </READ>
     return NORMAL;
 }
 
