@@ -62,13 +62,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 9683BFC2527417173ED578E91DC82110
-- generatedChecksum: 2540BC3940BFDC9582B5033E244511E4
+- generatedChecksum: 24304DD8AD90F3BB7D1BB010C727E563
   logicalPath: config/default/peripheral/pio
   name: plib_pio.c
   physicalPath: peripheral/pio
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 2540BC3940BFDC9582B5033E244511E4
+  userChecksum: 24304DD8AD90F3BB7D1BB010C727E563
 - generatedChecksum: F516AF09CB0AABF62594EAE57696D276
   logicalPath: config/default/peripheral/spi/spi_master
   name: plib_spi0_master.c
@@ -531,13 +531,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 55ECCC7FA71BD15B46EF80DC0515ED7A
-- generatedChecksum: A128E3E6DD2573C52F87FB16E14CC076
+- generatedChecksum: 9A10317A370BD5FD47A1081C34E37996
   logicalPath: config/default/peripheral/pio
   name: plib_pio.h
   physicalPath: peripheral/pio
   security: NON_SECURE
   type: HEADER
-  userChecksum: A128E3E6DD2573C52F87FB16E14CC076
+  userChecksum: 9A10317A370BD5FD47A1081C34E37996
 - generatedChecksum: 49DC5B8102A7281C71711E5D20DEDA9A
   logicalPath: config/default/peripheral/spi/spi_master
   name: plib_spi0_master.h

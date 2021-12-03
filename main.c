@@ -25,7 +25,7 @@
 #include <stddef.h>                     // Defines NULL
 #include <stdbool.h>                    // Defines true
 #include <stdlib.h>                     // Defines EXIT_FAILURE
-#include "definitions.h"                // SYS function prototypes
+#include "definitions.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -186,8 +186,10 @@ bool validate_CAN()
 bool validate_PIO()
 {
     static bool value = false;
-    PIO_PinWrite(PIO_PIN_PA6, value);
-    bool readed = PIO_PinRead(PIO_PIN_PD11);
+    PIO_PinWrite(PIO_PIN_PB3, value);
+    uint32_t delay = 0xffff;
+    while(delay-->0);
+    bool readed = PIO_PinRead(PIO_PIN_PA6);
     if(readed != value)
     {
         value = !value;

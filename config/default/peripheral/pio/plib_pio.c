@@ -74,8 +74,8 @@ void PIO_Initialize ( void )
     /* PORTA Output Write Enable */
     ((pio_registers_t*)PIO_PORT_A)->PIO_OWER = PIO_OWER_Msk;
     /* PORTA Output Direction Enable */
-    ((pio_registers_t*)PIO_PORT_A)->PIO_OER = 0x40;
-    ((pio_registers_t*)PIO_PORT_A)->PIO_ODR = ~0x40;
+    ((pio_registers_t*)PIO_PORT_A)->PIO_OER = 0x0;
+    ((pio_registers_t*)PIO_PORT_A)->PIO_ODR = ~0x0;
     /* PORTA Initial state High */
     ((pio_registers_t*)PIO_PORT_A)->PIO_ODSR = 0x0;
     /* PORTA drive control */
@@ -96,8 +96,8 @@ void PIO_Initialize ( void )
     /* PORTB Output Write Enable */
     ((pio_registers_t*)PIO_PORT_B)->PIO_OWER = PIO_OWER_Msk;
     /* PORTB Output Direction Enable */
-    ((pio_registers_t*)PIO_PORT_B)->PIO_OER = 0x0;
-    ((pio_registers_t*)PIO_PORT_B)->PIO_ODR = ~0x0;
+    ((pio_registers_t*)PIO_PORT_B)->PIO_OER = 0x8;
+    ((pio_registers_t*)PIO_PORT_B)->PIO_ODR = ~0x8;
     /* PORTB Initial state High */
     ((pio_registers_t*)PIO_PORT_B)->PIO_ODSR = 0x0;
     /* PORTB drive control */

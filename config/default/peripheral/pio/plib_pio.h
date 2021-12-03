@@ -62,14 +62,14 @@
 // *****************************************************************************
 
 
-/*** Macros for GPIO_PD11 pin ***/
-#define GPIO_PD11_Set()               (PIOD_REGS->PIO_SODR = (1<<11))
-#define GPIO_PD11_Clear()             (PIOD_REGS->PIO_CODR = (1<<11))
-#define GPIO_PD11_Toggle()            (PIOD_REGS->PIO_ODSR ^= (1<<11))
-#define GPIO_PD11_OutputEnable()      (PIOD_REGS->PIO_OER = (1<<11))
-#define GPIO_PD11_InputEnable()       (PIOD_REGS->PIO_ODR = (1<<11))
-#define GPIO_PD11_Get()               ((PIOD_REGS->PIO_PDSR >> 11) & 0x1)
-#define GPIO_PD11_PIN                  PIO_PIN_PD11
+/*** Macros for GPIO_PB3 pin ***/
+#define GPIO_PB3_Set()               (PIOB_REGS->PIO_SODR = (1<<3))
+#define GPIO_PB3_Clear()             (PIOB_REGS->PIO_CODR = (1<<3))
+#define GPIO_PB3_Toggle()            (PIOB_REGS->PIO_ODSR ^= (1<<3))
+#define GPIO_PB3_OutputEnable()      (PIOB_REGS->PIO_OER = (1<<3))
+#define GPIO_PB3_InputEnable()       (PIOB_REGS->PIO_ODR = (1<<3))
+#define GPIO_PB3_Get()               ((PIOB_REGS->PIO_PDSR >> 3) & 0x1)
+#define GPIO_PB3_PIN                  PIO_PIN_PB3
 
 /*** Macros for GPIO_PA6 pin ***/
 #define GPIO_PA6_Set()               (PIOA_REGS->PIO_SODR = (1<<6))
