@@ -192,7 +192,7 @@ bool validate_PIO()
 {
     static bool value = false;
     PIO_PinWrite(PIO_PIN_PB3, value);
-    uint32_t delay = 0xffff;
+    uint32_t delay = 0x00ff;
     while(delay-->0);
     bool readed = PIO_PinRead(PIO_PIN_PA6);
     if(readed != value)
