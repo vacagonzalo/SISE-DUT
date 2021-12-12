@@ -165,8 +165,13 @@ bool validate_CAN()
                 memset(rxFiFo0, 0x00, (numberOfMessage * MCAN1_RX_FIFO0_ELEMENT_SIZE));
                 if (MCAN1_MessageReceiveFifo(MCAN_RX_FIFO_0, numberOfMessage, (MCAN_RX_BUFFER *)rxFiFo0) == true)
                 {
-                    //print_message(numberOfMessage, (MCAN_RX_BUFFER *)rxFiFo0, MCAN1_RX_FIFO0_ELEMENT_SIZE);
-                    return NORMAL;
+                    for(uint8_t i = 0; i < 8; i++)
+                    {
+                        if(((MCAN_RX_BUFFER *)rxFiFo0)->data[i] != i)
+                        {
+                            return ERROR;
+                        }
+                    }
                 }
                 else
                 {
