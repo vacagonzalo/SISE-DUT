@@ -32,16 +32,12 @@
 // Section: Main Entry Point
 // *****************************************************************************
 // *****************************************************************************
-#define FRAME_SIZE  7
+#define FRAME_SIZE  3
 #define FRAME_START 0
 #define FLAGS_INDEX 1
-#define COUNT_INDEX 2
 
 #define NORMAL 0
 #define ERROR  1
-
-#define COUNTER_INIT 0
-#define COUNTER_SIZE 4
 
 /* Standard identifier id[28:18]*/
 #define WRITE_ID(id) (id << 18)
@@ -62,12 +58,6 @@ typedef union
     uint8_t packed;
 }report_t;
 
-typedef union
-{
-    uint8_t as_bytes[COUNTER_SIZE];
-    uint32_t packed;
-}reportCounter_t;
-
 bool validate_CAN();
 bool validate_PIO();
 bool validate_SPI();
@@ -77,10 +67,7 @@ uint8_t Mcan1MessageRAM[MCAN1_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned (3
 
 int main ( void )
 {
-    uint8_t buffer[] = "FXCCCC\n";
-    
-    reportCounter_t counter;
-    counter.packed = COUNTER_INIT;
+    uint8_t buffer[] = "FX\n";
  
     report_t report;
     report.packed = NORMAL;
@@ -89,14 +76,9 @@ int main ( void )
     SYS_Initialize ( NULL );
     
     buffer[FRAME_START] = 'F';
-    buffer[FLAGS_INDEX] = report.packed;
-    buffer[COUNT_INDEX + 0] = counter.as_bytes[0];
-    buffer[COUNT_INDEX + 1] = counter.as_bytes[1];
-    buffer[COUNT_INDEX + 2] = counter.as_bytes[2];
-    buffer[COUNT_INDEX + 3] = counter.as_bytes[3];
+    buffer[FLAGS_INDEX] = report.packed + 'A';
     USART1_Write(&buffer[0], FRAME_SIZE);
     
-    counter.packed++;
     WDT_Clear();
     
     MCAN1_MessageRAMConfigSet(Mcan1MessageRAM);
@@ -112,13 +94,8 @@ int main ( void )
         
         buffer[FRAME_START] = 'F';
         buffer[FLAGS_INDEX] = report.packed + 'A';
-        buffer[COUNT_INDEX + 0] = counter.as_bytes[0];
-        buffer[COUNT_INDEX + 1] = counter.as_bytes[1];
-        buffer[COUNT_INDEX + 2] = counter.as_bytes[2];
-        buffer[COUNT_INDEX + 3] = counter.as_bytes[3];
         USART1_Write(&buffer[0], FRAME_SIZE);
         
-        counter.packed++;
         WDT_Clear();
     }
     return ( EXIT_FAILURE );
