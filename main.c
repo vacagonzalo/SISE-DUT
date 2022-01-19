@@ -32,7 +32,7 @@
 // Section: Main Entry Point
 // *****************************************************************************
 // *****************************************************************************
-#define FRAME_SIZE  6
+#define FRAME_SIZE  7
 #define FRAME_START 0
 #define FLAGS_INDEX 1
 #define COUNT_INDEX 2
@@ -77,7 +77,7 @@ uint8_t Mcan1MessageRAM[MCAN1_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned (3
 
 int main ( void )
 {
-    uint8_t buffer[] = "RFCCCC";
+    uint8_t buffer[] = "FXCCCC\n";
     
     reportCounter_t counter;
     counter.packed = COUNTER_INIT;
@@ -88,7 +88,7 @@ int main ( void )
     
     SYS_Initialize ( NULL );
     
-    buffer[FRAME_START] = 'R';
+    buffer[FRAME_START] = 'F';
     buffer[FLAGS_INDEX] = report.packed;
     buffer[COUNT_INDEX + 0] = counter.as_bytes[0];
     buffer[COUNT_INDEX + 1] = counter.as_bytes[1];
@@ -110,8 +110,8 @@ int main ( void )
         report.status_of.SPI = validate_SPI();
         report.status_of.WATCHDOG = NORMAL;
         
-        buffer[FRAME_START] = 'R';
-        buffer[FLAGS_INDEX] = report.packed;
+        buffer[FRAME_START] = 'F';
+        buffer[FLAGS_INDEX] = report.packed + 'A';
         buffer[COUNT_INDEX + 0] = counter.as_bytes[0];
         buffer[COUNT_INDEX + 1] = counter.as_bytes[1];
         buffer[COUNT_INDEX + 2] = counter.as_bytes[2];
@@ -149,6 +149,9 @@ bool validate_CAN()
     }
     // </SEND>
     
+    uint32_t delay = 0x00ff;
+    while(delay-->0);
+    
     // <READ>
     if (MCAN1_InterruptGet(MCAN_INTERRUPT_RF0N_MASK))
     {    
@@ -172,6 +175,7 @@ bool validate_CAN()
                             return ERROR;
                         }
                     }
+                    return NORMAL;
                 }
                 else
                 {
@@ -185,7 +189,7 @@ bool validate_CAN()
         }
     }
     // </READ>
-    return NORMAL;
+    return ERROR;
 }
 
 bool validate_PIO()
